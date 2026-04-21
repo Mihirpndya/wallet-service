@@ -45,7 +45,7 @@ class WalletControllerTest {
         ResponseEntity<Wallet> response = walletController.createWallet(request);
 
         // Then
-        assertEquals(200, response.getStatusCode().value());
+        assertEquals(201, response.getStatusCode().value());
         assertEquals(wallet, response.getBody());
         verify(walletService, times(1)).createWalletForUser(userId);
     }

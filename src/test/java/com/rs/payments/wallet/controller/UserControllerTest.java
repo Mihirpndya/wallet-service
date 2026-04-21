@@ -38,7 +38,7 @@ class UserControllerTest {
         ResponseEntity<User> response = userController.createUser(request);
 
         // Then
-        assertEquals(200, response.getStatusCode().value());
+        assertEquals(201, response.getStatusCode().value());
         assertEquals(createdUser, response.getBody());
         verify(userService, times(1)).createUser(any(User.class));
     }

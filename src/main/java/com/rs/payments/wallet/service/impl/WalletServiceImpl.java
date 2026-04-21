@@ -2,6 +2,7 @@ package com.rs.payments.wallet.service.impl;
 
 import com.rs.payments.wallet.dto.DepositRequest;
 import com.rs.payments.wallet.dto.WithdrawRequest;
+import com.rs.payments.wallet.exception.DuplicateWalletException;
 import com.rs.payments.wallet.exception.InsufficientFundsException;
 import com.rs.payments.wallet.exception.ResourceNotFoundException;
 import com.rs.payments.wallet.model.Transaction;
@@ -34,9 +35,14 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
+    @Transactional
     public Wallet createWalletForUser(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (user.getWallet() != null) {
+            throw new DuplicateWalletException("User already has a wallet");
+        }
 
         Wallet wallet = new Wallet();
         wallet.setBalance(BigDecimal.ZERO);

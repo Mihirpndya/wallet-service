@@ -1,8 +1,10 @@
 package com.rs.payments.wallet.service.impl;
 
+import com.rs.payments.wallet.exception.DuplicateWalletException;
 import com.rs.payments.wallet.exception.ResourceNotFoundException;
 import com.rs.payments.wallet.model.User;
 import com.rs.payments.wallet.model.Wallet;
+import com.rs.payments.wallet.repository.TransactionRepository;
 import com.rs.payments.wallet.repository.UserRepository;
 import com.rs.payments.wallet.repository.WalletRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +30,9 @@ class WalletServiceImplTest {
     @Mock
     private WalletRepository walletRepository;
 
+    @Mock
+    private TransactionRepository transactionRepository;
+
     @InjectMocks
     private WalletServiceImpl walletService;
 
@@ -50,11 +55,10 @@ class WalletServiceImplTest {
         // Then
         assertNotNull(result);
         assertEquals(BigDecimal.ZERO, result.getBalance());
-        assertEquals(walletService.createWalletForUser(userId).getBalance(), BigDecimal.ZERO);
         
         // Verify interactions
-        verify(userRepository, times(2)).findById(userId); // Called twice due to second assert
-        verify(userRepository, times(2)).save(user);
+        verify(userRepository, times(1)).findById(userId);
+        verify(userRepository, times(1)).save(user);
     }
 
     @Test
@@ -66,6 +70,24 @@ class WalletServiceImplTest {
 
         // When & Then
         assertThrows(ResourceNotFoundException.class, () -> walletService.createWalletForUser(userId));
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Should throw exception when user already has wallet")
+    void shouldThrowExceptionWhenUserAlreadyHasWallet() {
+        // Given
+        UUID userId = UUID.randomUUID();
+        User user = new User();
+        user.setId(userId);
+        Wallet existingWallet = new Wallet();
+        existingWallet.setId(UUID.randomUUID());
+        user.setWallet(existingWallet);
+        
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        // When & Then
+        assertThrows(DuplicateWalletException.class, () -> walletService.createWalletForUser(userId));
         verify(userRepository, never()).save(any());
     }
 }
