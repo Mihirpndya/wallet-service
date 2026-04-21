@@ -1,6 +1,8 @@
 package com.rs.payments.wallet.service.impl;
 
 import com.rs.payments.wallet.dto.DepositRequest;
+import com.rs.payments.wallet.dto.WithdrawRequest;
+import com.rs.payments.wallet.exception.InsufficientFundsException;
 import com.rs.payments.wallet.exception.ResourceNotFoundException;
 import com.rs.payments.wallet.model.Transaction;
 import com.rs.payments.wallet.model.TransactionType;
@@ -61,6 +63,32 @@ public class WalletServiceImpl implements WalletService {
         transaction.setType(TransactionType.DEPOSIT);
         transaction.setTimestamp(LocalDateTime.now());
         transaction.setDescription("Deposit");
+
+        transactionRepository.save(transaction);
+
+        return updatedWallet;
+    }
+
+    @Override
+    @Transactional
+    public Wallet withdraw(UUID walletId, WithdrawRequest request) {
+        Wallet wallet = walletRepository.findById(walletId)
+                .orElseThrow(() -> new ResourceNotFoundException("Wallet not found"));
+
+        if (wallet.getBalance().compareTo(request.getAmount()) < 0) {
+            throw new InsufficientFundsException("Insufficient funds for withdrawal");
+        }
+
+        BigDecimal newBalance = wallet.getBalance().subtract(request.getAmount());
+        wallet.setBalance(newBalance);
+        Wallet updatedWallet = walletRepository.save(wallet);
+
+        Transaction transaction = new Transaction();
+        transaction.setWallet(wallet);
+        transaction.setAmount(request.getAmount());
+        transaction.setType(TransactionType.WITHDRAWAL);
+        transaction.setTimestamp(LocalDateTime.now());
+        transaction.setDescription("Withdrawal");
 
         transactionRepository.save(transaction);
 
