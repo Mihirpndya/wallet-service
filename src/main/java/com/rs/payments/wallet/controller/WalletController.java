@@ -1,5 +1,6 @@
 package com.rs.payments.wallet.controller;
 
+import com.rs.payments.wallet.dto.BalanceResponse;
 import com.rs.payments.wallet.dto.CreateWalletRequest;
 import com.rs.payments.wallet.dto.DepositRequest;
 import com.rs.payments.wallet.dto.WithdrawRequest;
@@ -97,5 +98,26 @@ public class WalletController {
         Wallet wallet = walletService.withdraw(id, request);
         return ResponseEntity.ok(wallet);
     }
+
+    @Operation(
+            summary = "Get wallet balance",
+            description = "Retrieves the current balance of the specified wallet.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Balance retrieved successfully",
+                            content = @Content(schema = @Schema(implementation = BalanceResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Wallet not found"
+                    )
+            }
+    )
+    @GetMapping("/{id}/balance")
+    public ResponseEntity<BalanceResponse> getBalance(@PathVariable UUID id) {
+        return ResponseEntity.ok(new BalanceResponse(walletService.getBalance(id)));
+    }
 }
+
 
