@@ -1,0 +1,114 @@
+{
+  "info": {
+    "name": "Wallet Service API - Complete Testing Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. USER MANAGEMENT",
+      "item": [
+        {
+          "name": "POST Create User - Alice",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\"username\": \"alice\", \"email\": \"alice@example.com\"}"},
+            "url": {"raw": "{{base_url}}/users", "host": ["{{base_url}}"], "path": ["users"]}
+          }
+        },
+        {
+          "name": "POST Create User - Bob",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\"username\": \"bob\", \"email\": \"bob@example.com\"}"},
+            "url": {"raw": "{{base_url}}/users", "host": ["{{base_url}}"], "path": ["users"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. WALLET MANAGEMENT",
+      "item": [
+        {
+          "name": "POST Create Wallet - Alice",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\"userId\": \"<USER_ID_ALICE>\"}"},
+            "url": {"raw": "{{base_url}}/wallets", "host": ["{{base_url}}"], "path": ["wallets"]}
+          }
+        },
+        {
+          "name": "POST Create Wallet - Bob",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\"userId\": \"<USER_ID_BOB>\"}"},
+            "url": {"raw": "{{base_url}}/wallets", "host": ["{{base_url}}"], "path": ["wallets"]}
+          }
+        },
+        {
+          "name": "GET Alice Balance",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Accept", "value": "application/json"}],
+            "url": {"raw": "{{base_url}}/wallets/<WALLET_ID_ALICE>/balance", "host": ["{{base_url}}"], "path": ["wallets", "<WALLET_ID_ALICE>", "balance"]}
+          }
+        },
+        {
+          "name": "POST Deposit Alice 500.00",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\"amount\": \"500.00\"}"},
+            "url": {"raw": "{{base_url}}/wallets/<WALLET_ID_ALICE>/deposit", "host": ["{{base_url}}"], "path": ["wallets", "<WALLET_ID_ALICE>", "deposit"]}
+          }
+        },
+        {
+          "name": "POST Withdraw Alice 100.00",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\"amount\": \"100.00\"}"},
+            "url": {"raw": "{{base_url}}/wallets/<WALLET_ID_ALICE>/withdraw", "host": ["{{base_url}}"], "path": ["wallets", "<WALLET_ID_ALICE>", "withdraw"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. TRANSFERS",
+      "item": [
+        {
+          "name": "POST Transfer Alice to Bob 150.00",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\"fromWalletId\": \"<WALLET_ID_ALICE>\", \"toWalletId\": \"<WALLET_ID_BOB>\", \"amount\": \"150.00\"}"},
+            "url": {"raw": "{{base_url}}/transfers", "host": ["{{base_url}}"], "path": ["transfers"]}
+          }
+        },
+        {
+          "name": "GET Alice Balance After Transfer",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Accept", "value": "application/json"}],
+            "url": {"raw": "{{base_url}}/wallets/<WALLET_ID_ALICE>/balance", "host": ["{{base_url}}"], "path": ["wallets", "<WALLET_ID_ALICE>", "balance"]}
+          }
+        },
+        {
+          "name": "GET Bob Balance After Transfer",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Accept", "value": "application/json"}],
+            "url": {"raw": "{{base_url}}/wallets/<WALLET_ID_BOB>/balance", "host": ["{{base_url}}"], "path": ["wallets", "<WALLET_ID_BOB>", "balance"]}
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {"key": "base_url", "value": "http://localhost:8080", "type": "string"}
+  ]
+}
+
